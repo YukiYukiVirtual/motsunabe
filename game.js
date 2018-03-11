@@ -309,17 +309,50 @@ phina.define("TitleScene",{
 		label.fontSize = 20;
 		
 		
-		
-		this.startLabel = Label("Start")
+		var startButton = Button({
+			text: "Start",
+			fontSize: 64,
+			width: 128,
+			height: 128,
+			fill: "transparent",
+			fontColor: "black",
+		})
 		.setPosition(this.gridX.center(),this.gridY.span(10))
 		.addChildTo(this);
-		this.startLabel.fontSize = 64;
+		var self = this;
+		startButton.onclick = function()
+		{
+			SoundManager.playMusic("kibou");
+			SoundManager.stopMusic();
+			self.exit();
+		}
+		startButton.onpointover = function()
+		{
+			this.fontColor = "red";
+		}
+		startButton.onpointout = function()
+		{
+			this.fontColor = "black";
+		}
 		
 		this.mito = Sprite("mito")
 		.setSize(128,128)
 		.addChildTo(this);
 		
 		this.mukade.addChildTo(this);
+		var mukadeButton = Button({
+			width: this.mukade.width,
+			height: this.mukade.height,
+			x: this.mukade.x,
+			y: this.mukade.y,
+			cornerRadius: this.mukade.radius,
+			text: "",
+			fill: "transparent",
+			stroke: "transparent",
+		}).addChildTo(this).onclick = function()
+		{
+			window.open("https://twitter.com/mukade_ningen","_blank");
+		};
 	},
 	update: function(app)
 	{
@@ -328,29 +361,14 @@ phina.define("TitleScene",{
 		
 		var cursor = Circle(app.pointer.x, app.pointer.y,0);
 		var mukade = Circle(this.mukade.x, this.mukade.y, this.mukade.radius);
-		var start = Circle(this.gridX.center(), this.gridY.center(), 128);
 		if(Collision.testCircleCircle(cursor,mukade)){
 			this.mukade.setScale(2,2);
 		}else{
 			this.mukade.setScale(1,1);
 		}
-		if(Collision.testCircleCircle(cursor,start)){
-			this.startLabel.fill = "red";
-		}else{
-			this.startLabel.fill = "black";
-		}
 	},
-	onpointstart: function(app)
+	onpointstart: function()
 	{
-		var cursor = Circle(app.pointer.x, app.pointer.y,0);
-		var mukade = Circle(this.mukade.x, this.mukade.y, this.mukade.radius);
-		var start = Circle(this.gridX.center(), this.gridY.center(), 128);
-		if(Collision.testCircleCircle(cursor,mukade)){
-			window.open("https://twitter.com/mukade_ningen","_blank");
-		}
-		if(Collision.testCircleCircle(cursor,start)){
-			this.exit();
-		}
 	},
 });
 
@@ -436,18 +454,5 @@ phina.main(function()
 		height: HEIGHT,
 		assets: ASSETS,
 	});
-	var locked = true;
-	var f = function(e){
-		if(locked){
-			var s = phina.asset.Sound();
-			s.loadFromBuffer();
-			s.play();
-			s.volume=0;
-			s.stop();
-			locked=false;
-			app.domElement.removeEventListener('touchend', f);
-		}
-	};
-	app.domElement.addEventListener('touchend',f);
 	app.run();
 });
