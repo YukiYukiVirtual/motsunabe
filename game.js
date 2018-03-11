@@ -14,7 +14,7 @@ var ASSETS = {
 	},
 	"sound":{
 		"bi":"sound/bi.wav",
-		"gekimazumomiji":"sound/gekimazumomiji.wav",
+		"gekimazu":"sound/gekimazu.wav",
 		"kakusanakya":"sound/kakusanakya.wav",
 		"kibou":"sound/kibou.mp3",
 		"mukade":"sound/mukade.wav",
@@ -114,7 +114,7 @@ phina.define("MainScene",{
 				y: nabe.y
 			},this.akagoSpeed)
 			.call(function () {
-				SoundManager.play("gekimazumomiji");
+				SoundManager.play("gekimazu");
 				self.score -= 300*self.scoremag;
 				self.bad += self.scoremag*10;
 				momiji.remove();
