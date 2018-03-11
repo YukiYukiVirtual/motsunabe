@@ -309,6 +309,7 @@ phina.define("TitleScene",{
 		label.fontSize = 20;
 		
 		
+		
 		this.startLabel = Label("Start")
 		.setPosition(this.gridX.center(),this.gridY.span(10))
 		.addChildTo(this);
@@ -435,5 +436,18 @@ phina.main(function()
 		height: HEIGHT,
 		assets: ASSETS,
 	});
+	var locked = true;
+	var f = function(e){
+		if(locked){
+			var s = phina.asset.Sound();
+			s.loadFromBuffer();
+			s.play();
+			s.volume=0;
+			s.stop();
+			locked=false;
+			app.domElement.removeEventListener('touchend', f);
+		}
+	};
+	app.domElement.addEventListener('touchend',f);
 	app.run();
 });
