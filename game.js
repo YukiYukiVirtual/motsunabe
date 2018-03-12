@@ -57,7 +57,7 @@ phina.define("MainScene",{
 		this.mito = Sprite("mito")
 			.setSize(128,128)
 			.addChildTo(this);
-		
+			
 		this.bad = 0;
 		this.badLabel = Label(this.bad)
 			.setOrigin(0,0.5)
@@ -72,6 +72,7 @@ phina.define("MainScene",{
 		this.scoreLabel = Label(this.score)
 			.setPosition(WIDTH/2, 50)
 			.addChildTo(this);
+		this.mukadeCount = 0;
 	},
 	update: function(app)
 	{
@@ -96,6 +97,7 @@ phina.define("MainScene",{
 				self.exit({
 					score: self.score,
 					bad: self.bad,
+					mukade: self.mukadeCount,
 				});
 			});
 			this.momijiGroup.children.each(function (elem) {
@@ -148,6 +150,7 @@ phina.define("MainScene",{
 			.call(function () {
 				SoundManager.play("gekimazu");
 				
+				self.score -= 100*self.scoremag;
 				self.bad += self.scoremag*5;
 				momiji.remove();
 			});
@@ -214,6 +217,7 @@ phina.define("MainScene",{
 				self.scoremag++;
 				self.mukadeRotation *= 2;
 				self.score *= 2;
+				self.mukadeCount++;
                 elem.remove();
             }
         });
@@ -252,7 +256,7 @@ phina.define("TitleScene",{
 		label = Label("鍋に赤子の拳のようなモツを入れよう！")
 		.setOrigin(0,0.5)
 		.setPosition(this.gridX.span(4)+dfontsize,this.gridY.span(3))
-		.addChildTo(this)
+		.addChildTo(this);
 		label.fontSize = dfontsize;
 		
 		Sprite("momiji")
@@ -262,16 +266,30 @@ phina.define("TitleScene",{
 		label = Label("もみじをクリックで取り除け！")
 		.setOrigin(0,0.5)
 		.setPosition(this.gridX.span(4)+dfontsize,this.gridY.span(4))
-		.addChildTo(this)
+		.addChildTo(this);
 		label.fontSize = dfontsize;
 		
 		this.mukade = Sprite("mukade")
 		.setPosition(this.gridX.span(4),this.gridY.span(5))
-		.setSize(60,60);
+		.setSize(60,60)
+		.setInteractive(true)
+		.addChildTo(this);
+		this.mukade.onpointover = function()
+		{
+			this.setScale(2,2);
+		}
+		this.mukade.onpointout = function()
+		{
+			this.setScale(1,1);
+		}
+		this.mukade.onclick = function()
+		{
+			window.open("https://twitter.com/mukade_ningen","_blank");
+		};
 		label = Label("ムカデを取るといろいろ増えるぞ！")
 		.setOrigin(0,0.5)
 		.setPosition(this.gridX.span(4)+dfontsize,this.gridY.span(5))
-		.addChildTo(this)
+		.addChildTo(this);
 		label.fontSize = dfontsize;
 		
 		Sprite("beer")
@@ -281,7 +299,7 @@ phina.define("TitleScene",{
 		label = Label("ﾋﾞ…をわたくしで隠して風紀を守ろう！")
 		.setOrigin(0,0.5)
 		.setPosition(this.gridX.span(4)+dfontsize,this.gridY.span(6))
-		.addChildTo(this)
+		.addChildTo(this);
 		label.fontSize = dfontsize;
 		
 		Sprite("bad")
@@ -291,7 +309,7 @@ phina.define("TitleScene",{
 		label = Label("Badが2000以上付くとゲームオーバー")
 		.setOrigin(0,0.5)
 		.setPosition(this.gridX.span(4)+dfontsize,this.gridY.span(7))
-		.addChildTo(this)
+		.addChildTo(this);
 		label.fontSize = dfontsize;
 		
 		
@@ -359,35 +377,11 @@ phina.define("TitleScene",{
 		.addChildTo(this);
 		
 		this.mukade.addChildTo(this);
-		var mukadeButton = Button({
-			width: this.mukade.width,
-			height: this.mukade.height,
-			x: this.mukade.x,
-			y: this.mukade.y,
-			cornerRadius: this.mukade.radius,
-			text: "",
-			fill: "transparent",
-			stroke: "transparent",
-		}).addChildTo(this).onclick = function()
-		{
-			window.open("https://twitter.com/mukade_ningen","_blank");
-		};
 	},
 	update: function(app)
 	{
 		this.mito.setPosition(app.pointer.x, app.pointer.y);
 		this.mukade.rotation+=6;
-		
-		var cursor = Circle(app.pointer.x, app.pointer.y,0);
-		var mukade = Circle(this.mukade.x, this.mukade.y, this.mukade.radius);
-		if(Collision.testCircleCircle(cursor,mukade)){
-			this.mukade.setScale(2,2);
-		}else{
-			this.mukade.setScale(1,1);
-		}
-	},
-	onpointstart: function()
-	{
 	},
 });
 
@@ -459,15 +453,53 @@ phina.define("ResultScene",{
 		label.fontSize = 64;
 		
 		var bfontsize = 48
-		Sprite("bad")
+		this.bad = Sprite("bad")
 		.setPosition(this.gridX.span(4),this.gridY.span(9))
 		.setSize(60,60)
+		.setInteractive(true)
 		.addChildTo(this);
-		label = Label(param.bad)
+		this.badLabel = Label(param.bad)
 		.setOrigin(0,0.5)
 		.setPosition(this.gridX.span(4)+bfontsize,this.gridY.span(9))
 		.addChildTo(this);
 		label.fontSize = bfontsize;
+		this.bad.onpointover = function()
+		{
+			this.setScale(2,2);
+		}
+		this.bad.onpointout = function()
+		{
+			this.setScale(1,1);
+		}
+		this.bad.onclick = function()
+		{
+			SoundManager.stopMusic();
+			SoundManager.playMusic("teihyouka",0,false);
+			self.badLabel.text = parseInt(self.badLabel.text)+1;
+		};
+		
+		this.mukade = Sprite("mukade")
+		.setPosition(this.gridX.span(11),this.gridY.span(9))
+		.setSize(60,60)
+		.setInteractive(true)
+		.addChildTo(this);
+		label = Label(param.mukade)
+		.setOrigin(0,0.5)
+		.setPosition(this.gridX.span(11)+bfontsize,this.gridY.span(9))
+		.addChildTo(this);
+		label.fontSize = bfontsize;
+		this.mukade.onpointover = function()
+		{
+			this.setScale(2,2);
+		}
+		this.mukade.onpointout = function()
+		{
+			this.setScale(1,1);
+		}
+		this.mukade.onclick = function()
+		{
+			window.open("https://twitter.com/mukade_ningen","_blank");
+		};
 		
 		Sprite("mito")
 		.setPosition(this.gridX.center(),this.gridY.span(9))
