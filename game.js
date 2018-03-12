@@ -26,7 +26,7 @@ var ASSETS = {
 SoundManager.setVolumeMusic(0.5);
 
 phina.define("MainScene",{
-	superClass: 'DisplayScene',
+	superClass: "DisplayScene",
 	init: function()
 	{
 		this.superInit({
@@ -34,7 +34,7 @@ phina.define("MainScene",{
 			height: HEIGHT,
 		});
 		SoundManager.playMusic("kibou");
-		this.backgroundColor = '#ffffdd';
+		this.backgroundColor = "#ffffdd";
 		
 		this.stopFlag = false;
 		
@@ -75,9 +75,40 @@ phina.define("MainScene",{
 	},
 	update: function(app)
 	{
+		var self = this;
 		if(this.stopFlag)
 			return;
-		var self = this;
+		if(this.bad >= 2000){
+			this.badLabel.text = this.bad;
+			this.scoreLabel.text = this.score;
+			this.stopFlag = true;
+			SoundManager.stopMusic();
+			var rect = RectangleShape()
+			.setPosition(this.gridX.center(),this.gridY.center())
+			.setSize(WIDTH,HEIGHT)
+			.addChildTo(this);
+			rect.fill = "black";
+			rect.stroke = "black";
+			rect.alpha = 0;
+			rect.tweener
+			.to({alpha:1},3000)
+			.call(function(){
+				self.exit({
+					score: self.score,
+					bad: self.bad,
+				});
+			});
+			this.momijiGroup.children.each(function (elem) {
+				elem.tweener.clear();
+			});
+			this.akagoGroup.children.each(function (elem) {
+				elem.tweener.clear();
+			});
+			this.mukadeGroup.children.each(function (elem) {
+				elem.tweener.clear();
+			});
+			return;
+		}
 		this.mito.setPosition(app.pointer.x, app.pointer.y);
 		this.mukadeGroup.children.each(function (elem) {
 			elem.rotation+=self.mukadeRotation;
@@ -102,6 +133,7 @@ phina.define("MainScene",{
 			},this.akagoSpeed)
 			.call(function () {
 				self.score += 100*self.scoremag;
+				self.bad -= self.scoremag;
 				akago.remove();
 			});
 			var momiji = Sprite("momiji")
@@ -115,8 +147,8 @@ phina.define("MainScene",{
 			},this.akagoSpeed)
 			.call(function () {
 				SoundManager.play("gekimazu");
-				self.score -= 300*self.scoremag;
-				self.bad += self.scoremag*10;
+				
+				self.bad += self.scoremag*5;
 				momiji.remove();
 			});
 		}
@@ -147,38 +179,12 @@ phina.define("MainScene",{
 				mukade.remove();
 			});
 		}
+		this.bad = Math.max(0,this.bad);
 		this.bad += this.beerGroup.children.length;
 		
 		this.badLabel.text = this.bad;
 		
-		this.score = Math.max(0,this.score);
 		this.scoreLabel.text = this.score;
-		
-		if(this.bad >= 2000){
-			this.stopFlag = true;
-			SoundManager.stopMusic();
-			var rect = RectangleShape()
-			.setPosition(this.gridX.center(),this.gridY.center())
-			.setSize(WIDTH,HEIGHT)
-			.addChildTo(this);
-			rect.fill = "black";
-			rect.stroke = "black";
-			rect.alpha = 0;
-			rect.tweener
-			.to({alpha:1},3000)
-			.call(function(){
-				self.exit({score:self.score,});
-			});
-			this.momijiGroup.children.each(function (elem) {
-				elem.tweener.clear();
-			});
-			this.akagoGroup.children.each(function (elem) {
-				elem.tweener.clear();
-			});
-			this.mukadeGroup.children.each(function (elem) {
-				elem.tweener.clear();
-			});
-		}
 	},
 	onpointstart: function(app)
 	{
@@ -237,49 +243,56 @@ phina.define("TitleScene",{
 		label.fontSize = 100;
 		label.fill = "green";
 		
+		var dfontsize = 32;
+		
 		Sprite("akago")
 		.setPosition(this.gridX.span(4),this.gridY.span(3))
 		.setSize(60,60)
 		.addChildTo(this);
 		label = Label("鍋に赤子の拳のようなモツを入れよう！")
-		.setPosition(this.gridX.center(),this.gridY.span(3))
+		.setOrigin(0,0.5)
+		.setPosition(this.gridX.span(4)+dfontsize,this.gridY.span(3))
 		.addChildTo(this)
+		label.fontSize = dfontsize;
 		
-		label.fontSize = 32;
-		label = Label("もみじが入ると減点！Badも増えるぞ！")
-		.setPosition(this.gridX.center(),this.gridY.span(4))
-		.addChildTo(this)
-		label.fontSize = 32;
 		Sprite("momiji")
 		.setPosition(this.gridX.span(4),this.gridY.span(4))
 		.setSize(60,60)
 		.addChildTo(this);
+		label = Label("もみじをクリックで取り除け！")
+		.setOrigin(0,0.5)
+		.setPosition(this.gridX.span(4)+dfontsize,this.gridY.span(4))
+		.addChildTo(this)
+		label.fontSize = dfontsize;
 		
 		this.mukade = Sprite("mukade")
 		.setPosition(this.gridX.span(4),this.gridY.span(5))
 		.setSize(60,60);
 		label = Label("ムカデを取るといろいろ増えるぞ！")
-		.setPosition(this.gridX.center(),this.gridY.span(5))
+		.setOrigin(0,0.5)
+		.setPosition(this.gridX.span(4)+dfontsize,this.gridY.span(5))
 		.addChildTo(this)
-		label.fontSize = 32;
+		label.fontSize = dfontsize;
 		
 		Sprite("beer")
 		.setPosition(this.gridX.span(4),this.gridY.span(6))
 		.setSize(60,60)
 		.addChildTo(this);
 		label = Label("ﾋﾞ…をわたくしで隠して風紀を守ろう！")
-		.setPosition(this.gridX.center(),this.gridY.span(6))
+		.setOrigin(0,0.5)
+		.setPosition(this.gridX.span(4)+dfontsize,this.gridY.span(6))
 		.addChildTo(this)
-		label.fontSize = 32;
+		label.fontSize = dfontsize;
 		
 		Sprite("bad")
 		.setPosition(this.gridX.span(4),this.gridY.span(7))
 		.setSize(60,60)
 		.addChildTo(this);
 		label = Label("Badが2000以上付くとゲームオーバー")
-		.setPosition(this.gridX.center(),this.gridY.span(7))
+		.setOrigin(0,0.5)
+		.setPosition(this.gridX.span(4)+dfontsize,this.gridY.span(7))
 		.addChildTo(this)
-		label.fontSize = 32;
+		label.fontSize = dfontsize;
 		
 		
 		label = Label("SoundEffect 月ノ美兎")
@@ -392,7 +405,7 @@ phina.define("ResultScene",{
 		.setPosition(this.gridX.center(),this.gridY.span(14))
 		.addChildTo(this);
 
-		var text = 'モツを{0}個食べました！'.format(String(param.score).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,'));
+		var text = "モツを{0}個食べました！".format(String(param.score).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
 		shareButton.onclick = function()
 		{
 			var url = phina.social.Twitter.createURL({
@@ -400,7 +413,7 @@ phina.define("ResultScene",{
 				hashtags: ["委員長の美味しいモツ鍋"],
 			});
 
-			window.open(url, 'share window', 'width=480, height=320');
+			window.open(url, "share window", "width=480, height=320");
 		};
 		
 		var restartButton = Button({
@@ -439,6 +452,17 @@ phina.define("ResultScene",{
 		.addChildTo(this);
 		label.fontSize = 64;
 		
+		var bfontsize = 48
+		Sprite("bad")
+		.setPosition(this.gridX.span(4),this.gridY.span(9))
+		.setSize(60,60)
+		.addChildTo(this);
+		label = Label(param.bad)
+		.setOrigin(0,0.5)
+		.setPosition(this.gridX.span(4)+bfontsize,this.gridY.span(9))
+		.addChildTo(this);
+		label.fontSize = bfontsize;
+		
 		Sprite("mito")
 		.setPosition(this.gridX.center(),this.gridY.span(9))
 		.setSize(256,256)
@@ -449,7 +473,7 @@ phina.define("ResultScene",{
 phina.main(function()
 {
 	var app = GameApp({
-		startLabel: 'title',
+		startLabel: "title",
 		width: WIDTH,
 		height: HEIGHT,
 		assets: ASSETS,
