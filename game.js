@@ -321,6 +321,12 @@ phina.define("TitleScene",{
 		.addChildTo(this);
 		label.fontSize = 20;
 		
+		label = Label("lastModified:"+document.lastModified)
+		.setOrigin(1,1)
+		.setPosition(this.gridX.span(16),this.gridY.span(16))
+		.addChildTo(this);
+		label.fontSize = 20;
+		
 		
 		var startButton = Button({
 			text: "Start",
