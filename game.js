@@ -68,8 +68,8 @@ phina.define("MainScene",{
 			.setPosition(WIDTH/2-20,100)
 			.setSize(32,32)
 			.addChildTo(this);
-		this.score = 0;
-		this.scoreLabel = Label(this.score)
+		this.score = bigInt();
+		this.scoreLabel = Label(this.score.toString())
 			.setPosition(WIDTH/2, 50)
 			.addChildTo(this);
 		this.mukadeCount = 0;
@@ -81,7 +81,7 @@ phina.define("MainScene",{
 			return;
 		if(this.bad >= 2000){
 			this.badLabel.text = this.bad;
-			this.scoreLabel.text = this.score;
+			this.scoreLabel.text = this.score.toString();
 			this.stopFlag = true;
 			SoundManager.stopMusic();
 			var rect = RectangleShape()
@@ -95,7 +95,7 @@ phina.define("MainScene",{
 			.to({alpha:1},3000)
 			.call(function(){
 				self.exit({
-					score: self.score,
+					score: self.score.toString(),
 					bad: self.bad,
 					mukade: self.mukadeCount,
 				});
@@ -133,7 +133,7 @@ phina.define("MainScene",{
 				y: nabe.y
 			},this.akagoSpeed)
 			.call(function () {
-				self.score += 100*self.scoremag;
+				self.score = self.score.add(100*self.scoremag);
 				self.bad -= self.scoremag;
 				akago.remove();
 			});
@@ -149,7 +149,7 @@ phina.define("MainScene",{
 			.call(function () {
 				SoundManager.play("gekimazu");
 				
-				self.score -= 100*self.scoremag;
+				self.score = self.score.subtract(100*self.scoremag);
 				self.bad += self.scoremag*10;
 				momiji.remove();
 			});
@@ -186,7 +186,7 @@ phina.define("MainScene",{
 		
 		this.badLabel.text = this.bad;
 		
-		this.scoreLabel.text = this.score;
+		this.scoreLabel.text = this.score.toString();
 	},
 	onpointstart: function(app)
 	{
@@ -215,7 +215,7 @@ phina.define("MainScene",{
 				self.akagoSpeed = Math.max(1500,self.akagoSpeed-100);
 				self.scoremag++;
 				self.mukadeRotation *= 2;
-				self.score *= 2;
+				self.score = self.score.multiply(2);
 				self.mukadeCount++;
                 elem.remove();
             }
@@ -418,7 +418,7 @@ phina.define("ResultScene",{
 		.setPosition(this.gridX.center(),this.gridY.span(14))
 		.addChildTo(this);
 
-		var text = "モツを{0}個食べました！".format(String(param.score).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
+		var text = "モツを{0}個食べました！".format(param.score.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
 		shareButton.onclick = function()
 		{
 			var url = phina.social.Twitter.createURL({
