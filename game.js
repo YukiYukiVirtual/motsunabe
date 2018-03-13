@@ -33,8 +33,8 @@ phina.define("MainScene",{
 			width: WIDTH,
 			height: HEIGHT,
 		});
-		SoundManager.playMusic("kibou");
 		this.backgroundColor = "#ffffdd";
+		SoundManager.playMusic("kibou");
 		
 		this.stopFlag = false;
 		
@@ -122,8 +122,7 @@ phina.define("MainScene",{
 			var cornerY = [0,HEIGHT,0,HEIGHT];
 			
 			var atan2 = Math.atan2(cornerY[corner] - this.nabe.y, cornerX[corner] - this.nabe.x);
-			var nabe = Circle(this.nabe.x + Math.cos(atan2) * this.nabe.radius,	this.nabe.y + Math.sin(atan2) * this.nabe.radius, this.nabe.radius);
-			
+			var nabe = Vector2(this.nabe.x + Math.cos(atan2) * this.nabe.radius/2,	this.nabe.y + this.nabe.radius/4 + Math.sin(atan2) * this.nabe.radius/2);
 			var akago = Sprite("akago")
 				.setPosition(cornerX[corner], cornerY[corner])
 				.setSize(64,64)
@@ -151,7 +150,7 @@ phina.define("MainScene",{
 				SoundManager.play("gekimazu");
 				
 				self.score -= 100*self.scoremag;
-				self.bad += self.scoremag*5;
+				self.bad += self.scoremag*10;
 				momiji.remove();
 			});
 		}
@@ -213,7 +212,7 @@ phina.define("MainScene",{
 				self.akagofreq = Math.max(5,self.akagofreq-1);
 				self.beerfreq = Math.max(80,self.beerfreq-4);
 				self.mukadefreq = Math.max(100,self.mukadefreq-10);
-				self.akagoSpeed = Math.max(2000,self.akagoSpeed-100);
+				self.akagoSpeed = Math.max(1500,self.akagoSpeed-100);
 				self.scoremag++;
 				self.mukadeRotation *= 2;
 				self.score *= 2;
@@ -234,7 +233,18 @@ phina.define("TitleScene",{
 			height: HEIGHT,
 		});
 		this.backgroundColor = "#ffffdd";
-		SoundManager.playMusic("retrogamecenter2");
+		if(phina.isMobile())
+		{
+			this.addEventListener("click",function clickevent(){
+				SoundManager.playMusic("retrogamecenter2");
+				self.removeEventListener("click",clickevent);
+			});
+		}
+		else
+		{
+			SoundManager.playMusic("retrogamecenter2");
+		}
+		this.stopFlag = false;
 		
 		Sprite("nabe")
 			.setPosition(this.gridX.center(),this.gridY.center())
@@ -359,9 +369,8 @@ phina.define("TitleScene",{
 		var self = this;
 		startButton.onclick = function()
 		{
-			SoundManager.playMusic("kibou");
 			SoundManager.stopMusic();
-			self.exit();
+			self.stopFlag = true;
 		}
 		startButton.onpointover = function()
 		{
@@ -382,6 +391,10 @@ phina.define("TitleScene",{
 	{
 		this.mito.setPosition(app.pointer.x, app.pointer.y);
 		this.mukade.rotation+=6;
+		if(this.stopFlag){
+			SoundManager.stopMusic();
+			this.exit();
+		}
 	},
 });
 
@@ -409,7 +422,7 @@ phina.define("ResultScene",{
 		shareButton.onclick = function()
 		{
 			var url = phina.social.Twitter.createURL({
-				text: text,
+				text: text + (phina.isMobile()?"(モバイルから)":""),
 				hashtags: ["委員長の美味しいモツ鍋"],
 			});
 
