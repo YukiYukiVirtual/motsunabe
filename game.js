@@ -59,8 +59,7 @@
 				.setSize(128,128)
 				.addChildTo(this);
 				
-			this.bad = 0;
-			this.badLabel = Label(this.bad)
+			this.badLabel = Label("")
 				.setOrigin(0,0.5)
 				.setPosition(WIDTH/2-20, 100)
 				.addChildTo(this);
@@ -69,10 +68,12 @@
 				.setPosition(WIDTH/2-20,100)
 				.setSize(32,32)
 				.addChildTo(this);
-			this.score = bigInt();
-			this.scoreLabel = Label(this.score.toString())
+			this.scoreLabel = Label("")
 				.setPosition(WIDTH/2, 50)
 				.addChildTo(this);
+			
+			this.score = bigInt();
+			this.bad = 0;
 			this.mukadeCount = 0;
 		},
 		update: function(app)
@@ -81,8 +82,6 @@
 			if(this.stopFlag)
 				return;
 			if(this.bad >= 2000){
-				this.badLabel.text = this.bad;
-				this.scoreLabel.text = this.score.toString();
 				this.stopFlag = true;
 				SoundManager.stopMusic();
 				var rect = RectangleShape()
@@ -96,7 +95,7 @@
 				.to({alpha:1},3000)
 				.call(function(){
 					self.exit({
-						score: self.score.toString(),
+						score: self.scoreLabel.text,
 						bad: self.bad,
 						mukade: self.mukadeCount,
 					});
@@ -184,10 +183,26 @@
 			}
 			this.bad = Math.max(0,this.bad);
 			this.bad += this.beerGroup.children.length;
-			
-			this.badLabel.text = this.bad;
-			
-			this.scoreLabel.text = this.score.toString();
+		},
+		_accessor: {
+			score: {
+				get: function(){
+					return this._score;
+				},
+				set: function(x){
+					this._score = x;
+					this.scoreLabel.text = x.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+				},
+			},
+			bad: {
+				get: function(){
+					return this._bad;
+				},
+				set: function(x){
+					this._bad = x;
+					this.badLabel.text = x;
+				},
+			},
 		},
 		onpointstart: function(app)
 		{
@@ -410,7 +425,7 @@
 			.setPosition(this.gridX.center(),this.gridY.span(14))
 			.addChildTo(this);
 
-			var text = "モツを{0}個食べました！".format(param.score.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
+			var text = "モツを{0}個食べました！".format(param.score);
 			shareButton.onclick = function()
 			{
 				var url = phina.social.Twitter.createURL({
