@@ -323,25 +323,16 @@ phina.define("TitleScene",{
 		label.fontSize = dfontsize;
 		
 		
-		label = Label("SoundEffect 月ノ美兎")
-		.setPosition(this.gridX.center(),this.gridY.span(12))
+		label = Label("\
+		SoundEffect 月ノ美兎\n\
+		Illustration いらすとや\n\
+		Music 甘茶の音楽工房\n\
+		Programming 結城ゆき\n\
+		")
+		.setOrigin(0.5,1)
+		.setPosition(this.gridX.center(),this.gridY.span(16))
 		.addChildTo(this);
-		label.fontSize = 32;
-		
-		label = Label("Illustration いらすとや")
-		.setPosition(this.gridX.center(),this.gridY.span(13))
-		.addChildTo(this);
-		label.fontSize = 32;
-		
-		label = Label("Music 甘茶の音楽工房")
-		.setPosition(this.gridX.center(),this.gridY.span(14))
-		.addChildTo(this);
-		label.fontSize = 32;
-		
-		label = Label("Programming 結城ゆき")
-		.setPosition(this.gridX.center(),this.gridY.span(15))
-		.addChildTo(this);
-		label.fontSize = 32;
+		label.fontSize = 30;
 		
 		label = Label("連絡先 Twitter@YukiYukiVirtual")
 		.setOrigin(0,1)
@@ -364,7 +355,7 @@ phina.define("TitleScene",{
 			fill: "transparent",
 			fontColor: "black",
 		})
-		.setPosition(this.gridX.center(),this.gridY.span(10))
+		.setPosition(this.gridX.center(),this.gridY.span(11))
 		.addChildTo(this);
 		var self = this;
 		startButton.onclick = function()
