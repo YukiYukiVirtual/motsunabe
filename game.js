@@ -209,7 +209,7 @@
 				},
 			},
 		},
-		onpointstart: function(app)
+		onenterframe: function(app)
 		{
 			var mito = Circle(this.mito.x, this.mito.y, this.mito.radius);
 			this.momijiGroup.children.each(function (elem) {
@@ -255,10 +255,11 @@
 			this.backgroundColor = "#ffffdd";
 			if(phina.isMobile())
 			{
+				var self = this;
 				function clickevent(){
 					SoundManager.playMusic("retrogamecenter2");
-					this.removeEventListener("click",clickevent);
-				}.bind(this)
+					self.removeEventListener("click",clickevent);
+				};
 				this.addEventListener("click",clickevent);
 			}
 			else
