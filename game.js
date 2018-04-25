@@ -1,4 +1,5 @@
 (function(){
+	var EVENTSET = false;
 	phina.globalize();
 	var WIDTH = 1280;
 	var HEIGHT = 960;
@@ -117,6 +118,8 @@
 					x: app.pointer.x,
 					y: app.pointer.y,
 				},app.deltaTime * 1.2);
+				
+			this.mitoHitsSomething();
 			this.mukadeGroup.children.each(function (elem) {
 				elem.rotation+=this.mukadeRotation;
 			}.bind(this));
@@ -209,25 +212,21 @@
 				},
 			},
 		},
-		onenterframe: function(app)
+		mitoHitsSomething: function()
 		{
-			var mito = Circle(this.mito.x, this.mito.y, this.mito.radius);
-			this.momijiGroup.children.each(function (elem) {
-				var momiji = Circle(elem.x, elem.y, elem.radius); 
-				if (Collision.testCircleCircle(mito, momiji)) {
+			this.momijiGroup.children.each(function(elem){
+				if (Collision.testCircleCircle(this.mito, elem)){
 					elem.remove();
 				}
-			});
-			this.beerGroup.children.each(function (elem) {
-				var beer = Circle(elem.x, elem.y, elem.radius); 
-				if (Collision.testCircleCircle(mito, beer)) {
+			}.bind(this));
+			this.beerGroup.children.each(function(elem){
+				if (Collision.testCircleCircle(this.mito, elem)){
 					elem.remove();
 					SoundManager.play("kakusanakya");
 				}
-			});
-			this.mukadeGroup.children.each(function (elem) {
-				var mukade = Circle(elem.x, elem.y, elem.radius); 
-				if (Collision.testCircleCircle(mito, mukade)) {
+			}.bind(this));
+			this.mukadeGroup.children.each(function(elem){
+				if (Collision.testCircleCircle(this.mito, elem)){
 					SoundManager.play("mukadeningen");
 					this.akagofreq = Math.max(5,this.akagofreq-1);
 					this.beerfreq = Math.max(80,this.beerfreq-4);
@@ -240,8 +239,7 @@
 					elem.remove();
 				}
 			}.bind(this));
-			
-		}
+		},
 	});
 
 	phina.define("TitleScene",{
@@ -253,8 +251,9 @@
 				height: HEIGHT,
 			});
 			this.backgroundColor = "#ffffdd";
-			if(phina.isMobile())
+			if(phina.isMobile() && !EVENTSET)
 			{
+				EVENTSET = true;
 				var self = this;
 				this.addEventListener("click",
 					function clickevent(){
