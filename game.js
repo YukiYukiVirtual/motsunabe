@@ -256,11 +256,12 @@
 			if(phina.isMobile())
 			{
 				var self = this;
-				function clickevent(){
-					SoundManager.playMusic("retrogamecenter2");
-					self.removeEventListener("click",clickevent);
-				};
-				this.addEventListener("click",clickevent);
+				this.addEventListener("click",
+					function clickevent(){
+						SoundManager.playMusic("retrogamecenter2");
+						self.removeEventListener("click",clickevent);
+					}
+				);
 			}
 			else
 			{
