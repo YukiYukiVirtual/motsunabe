@@ -22,7 +22,7 @@
 			"mukadeningen":"sound/mukadeningen.wav",
 			"retrogamecenter2":"sound/retrogamecenter2.mp3",
 			"teihyouka":"sound/teihyouka.wav",
-		}
+		},
 	};
 	SoundManager.setVolumeMusic(0.5);
 
@@ -78,7 +78,6 @@
 		},
 		update: function(app)
 		{
-			var self = this;
 			if(this.stopFlag)
 				return;
 			if(this.bad >= 2000){
@@ -94,12 +93,12 @@
 				rect.tweener
 				.to({alpha:1},3000)
 				.call(function(){
-					self.exit({
-						score: self.scoreLabel.text,
-						bad: self.bad,
-						mukade: self.mukadeCount,
+					this.exit({
+						score: this.scoreLabel.text,
+						bad: this.bad,
+						mukade: this.mukadeCount,
 					});
-				});
+				}.bind(this));
 				this.momijiGroup.children.each(function (elem) {
 					elem.tweener.clear();
 				});
@@ -113,8 +112,8 @@
 			}
 			this.mito.setPosition(app.pointer.x, app.pointer.y);
 			this.mukadeGroup.children.each(function (elem) {
-				elem.rotation+=self.mukadeRotation;
-			});
+				elem.rotation+=this.mukadeRotation;
+			}.bind(this));
 
 			if(app.frame % this.akagofreq == 0){
 				var corner = Random.randint(0,3);
@@ -132,11 +131,11 @@
 					x: nabe.x,
 					y: nabe.y
 				},this.akagoSpeed)
-				.call(function () {
-					self.score = self.score.add(100*self.scoremag);
-					self.bad -= self.scoremag;
+				.call(function(){
+					this.score = this.score.add(100 * this.scoremag);
+					this.bad -= this.scoremag;
 					akago.remove();
-				});
+				}.bind(this));
 				var momiji = Sprite("momiji")
 					.setPosition(cornerX[corner], cornerY[corner])
 					.setSize(64,64)
@@ -146,13 +145,12 @@
 					x: nabe.x,
 					y: nabe.y
 				},this.akagoSpeed)
-				.call(function () {
+				.call(function(){
 					SoundManager.play("gekimazu");
-					
-					self.score = self.score.subtract(100*self.scoremag);
-					self.bad += self.scoremag*10;
+					this.score = this.score.subtract(100 * this.scoremag);
+					this.bad += this.scoremag * 10;
 					momiji.remove();
-				});
+				}.bind(this));
 			}
 			if(Random.randint(0,this.beerfreq) == 0)
 			{
@@ -177,10 +175,11 @@
 					x: cornerX[(corner+2)%4],
 					y: cornerY[(corner+2)%4]
 				},this.mukadeSpeed)
-				.call(function () {
+				.call(function(){
 					mukade.remove();
 				});
 			}
+			
 			this.bad = Math.max(0,this.bad);
 			this.bad += this.beerGroup.children.length;
 		},
@@ -206,7 +205,6 @@
 		},
 		onpointstart: function(app)
 		{
-			var self = this;
 			var mito = Circle(this.mito.x, this.mito.y, this.mito.radius);
 			this.momijiGroup.children.each(function (elem) {
 				var momiji = Circle(elem.x, elem.y, elem.radius); 
@@ -225,17 +223,17 @@
 				var mukade = Circle(elem.x, elem.y, elem.radius); 
 				if (Collision.testCircleCircle(mito, mukade)) {
 					SoundManager.play("mukadeningen");
-					self.akagofreq = Math.max(5,self.akagofreq-1);
-					self.beerfreq = Math.max(80,self.beerfreq-4);
-					self.mukadefreq = Math.max(100,self.mukadefreq-10);
-					self.akagoSpeed = Math.max(1500,self.akagoSpeed-100);
-					self.scoremag++;
-					self.mukadeRotation *= 2;
-					self.score = self.score.multiply(2);
-					self.mukadeCount++;
+					this.akagofreq = Math.max(5,this.akagofreq-1);
+					this.beerfreq = Math.max(80,this.beerfreq-4);
+					this.mukadefreq = Math.max(100,this.mukadefreq-10);
+					this.akagoSpeed = Math.max(1500,this.akagoSpeed-100);
+					this.scoremag++;
+					this.mukadeRotation *= 2;
+					this.score = this.score.multiply(2);
+					this.mukadeCount++;
 					elem.remove();
 				}
-			});
+			}.bind(this));
 			
 		}
 	});
@@ -253,8 +251,8 @@
 			{
 				this.addEventListener("click",function clickevent(){
 					SoundManager.playMusic("retrogamecenter2");
-					self.removeEventListener("click",clickevent);
-				});
+					this.removeEventListener("click",clickevent);
+				}.bind(this));
 			}
 			else
 			{
@@ -373,12 +371,11 @@
 			})
 			.setPosition(this.gridX.center(),this.gridY.span(11))
 			.addChildTo(this);
-			var self = this;
 			startButton.onclick = function()
 			{
 				SoundManager.stopMusic();
-				self.stopFlag = true;
-			}
+				this.stopFlag = true;
+			}.bind(this)
 			startButton.onpointover = function()
 			{
 				this.fontColor = "red";
@@ -446,12 +443,11 @@
 			})
 			.setPosition(this.gridX.center(),this.gridY.span(12))
 			.addChildTo(this);
-			var self = this;
 			restartButton.onclick = function()
 			{
 				SoundManager.stopMusic();
-				self.exit();
-			}
+				this.exit();
+			}.bind(this)
 			restartButton.onpointover = function()
 			{
 				this.fontColor = "red";
@@ -495,8 +491,8 @@
 			{
 				SoundManager.stopMusic();
 				SoundManager.playMusic("teihyouka",0,false);
-				self.badLabel.text = parseInt(self.badLabel.text)+1;
-			};
+				this.badLabel.text = parseInt(this.badLabel.text)+1;
+			}.bind(this);
 			
 			this.mukade = Sprite("mukade")
 			.setPosition(this.gridX.span(11),this.gridY.span(9))
