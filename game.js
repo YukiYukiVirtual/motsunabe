@@ -253,13 +253,13 @@
 				height: HEIGHT,
 			});
 			this.backgroundColor = "#ffffdd";
-			var self = this;
 			if(phina.isMobile())
 			{
-				this.addEventListener("click",function clickevent(){
+				function clickevent(){
 					SoundManager.playMusic("retrogamecenter2");
-					self.removeEventListener("click",clickevent);
-				});
+					this.removeEventListener("click",clickevent);
+				}.bind(this)
+				this.addEventListener("click",clickevent);
 			}
 			else
 			{
