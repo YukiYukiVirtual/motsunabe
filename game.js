@@ -28,7 +28,7 @@
 
 	phina.define("MainScene",{
 		superClass: "DisplayScene",
-		init: function()
+		init: function(param)
 		{
 			this.superInit({
 				width: WIDTH,
@@ -56,6 +56,7 @@
 			this.akagoGroup = DisplayElement().addChildTo(this);
 			this.momijiGroup = DisplayElement().addChildTo(this);
 			this.mito = Sprite("mito")
+				.setPosition(param.x, param.y)
 				.setSize(128,128)
 				.addChildTo(this);
 				
@@ -110,7 +111,12 @@
 				});
 				return;
 			}
-			this.mito.setPosition(app.pointer.x, app.pointer.y);
+			this.mito.tweener
+				.clear()
+				.to({
+					x: app.pointer.x,
+					y: app.pointer.y,
+				},app.deltaTime * 1.2);
 			this.mukadeGroup.children.each(function (elem) {
 				elem.rotation+=this.mukadeRotation;
 			}.bind(this));
@@ -393,11 +399,19 @@
 		},
 		update: function(app)
 		{
-			this.mito.setPosition(app.pointer.x, app.pointer.y);
+			this.mito.tweener
+				.clear()
+				.to({
+					x: app.pointer.x,
+					y: app.pointer.y,
+				},app.deltaTime * 1.2);
 			this.mukade.rotation+=6;
 			if(this.stopFlag){
 				SoundManager.stopMusic();
-				this.exit();
+				this.exit({
+					x: app.pointer.x,
+					y: app.pointer.y,
+				});
 			}
 		},
 	});
