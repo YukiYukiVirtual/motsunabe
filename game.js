@@ -443,7 +443,7 @@
 			{
 				var url = phina.social.Twitter.createURL({
 					text: text + (phina.isMobile()?"(モバイルから)":""),
-					hashtags: ["委員長の美味しいモツ鍋"],
+					hashtags: ["委員長の美味しいモツ鍋", "YukiYukiVirtual", "phina_js"],
 				});
 
 				window.open(url, "share window", "width=480, height=320");
