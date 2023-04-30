@@ -25,7 +25,7 @@
 			"teihyouka":"sound/teihyouka.wav",
 		},
 	};
-	SoundManager.setVolumeMusic(0.5);
+	SoundManager.setVolumeMusic(0.2);
 
 	phina.define("MainScene",{
 		superClass: "DisplayScene",
