@@ -295,7 +295,7 @@
 			.setPosition(this.gridX.span(4),this.gridY.span(4))
 			.setSize(60,60)
 			.addChildTo(this);
-			label = Label("もみじをクリックで取り除け！")
+			label = Label("もみじを委員長で取り除け！")
 			.setOrigin(0,0.5)
 			.setPosition(this.gridX.span(4)+dfontsize,this.gridY.span(4))
 			.addChildTo(this);
